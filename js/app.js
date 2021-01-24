@@ -1,5 +1,6 @@
-window.ctx.font = "22px Verdana";
-window.ctx.strokeStyle = "white";
+ctx.font = "22px Verdana";
+ctx.strokeStyle = "white";
+
 const cellY = 83;
 const cellX = 100;
 const maxY = cellY * 5 - 10;
@@ -24,19 +25,38 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-const Player = function(x, y) {
+const Player = function({ x, y, allowedKeys, playerImageIndex }) {
+    const playerImages = [
+      'images/char-boy.png',
+      'images/char-cat-girl.png',
+      'images/char-horn-girl.png',
+      'images/char-pink-girl.png',
+      'images/char-princess-girl.png',
+    ];
+
     this.x = x;
     this.y = y;
-    this.sprite = 'images/char-boy.png';
+    this.sprite = playerImages[playerImageIndex];
     
     document.addEventListener('keyup', (event) => {
-      var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-      };
       this.handleInput(allowedKeys[event.keyCode]);
+    });
+    
+    
+   
+
+    canvas.addEventListener('click', (event) => {
+      const { offsetX, offsetY } = event;
+
+      if (offsetX >= this.x && offsetX <= this.x + 100) {
+        if (offsetY >= this.y + 60 && offsetY < this.y + 60 + cellY) {
+          playerImageIndex++;
+          if(playerImageIndex === playerImages.length) {
+            playerImageIndex = 0;
+          }
+          this.sprite = playerImages[playerImageIndex];
+      } 
+      }
     });
 };
 
@@ -91,7 +111,29 @@ Text.prototype.render = function() {
 const Controller = function(Player, Enemy, Text) {
   this.gameResult = new Text('');
 
-  this.player = new Player(200, maxY);
+  this.player = new Player({
+    x: 100, 
+    y: maxY, 
+    allowedKeys: {
+      65: 'left',
+      87: 'up',
+      68: 'right',
+      83: 'down'
+    },
+    playerImageIndex: 0,
+  });
+
+  this.player2 = new Player({
+    x: 300, 
+    y: maxY, 
+    allowedKeys: {
+      37: 'left',
+      38: 'up',
+      39: 'right',
+      40: 'down'
+    },
+    playerImageIndex: 1,
+  });
 
   this.enemies = [
     new Enemy(10, 63, 1),
@@ -102,6 +144,7 @@ const Controller = function(Player, Enemy, Text) {
   this.items = [
     ...this.enemies,
     this.player,
+    this.player2,
     this.gameResult,
   ];
 };
@@ -131,8 +174,16 @@ Controller.prototype.checkIfLose = function() {
   this.enemies.forEach((enemy) => {
     if (enemy.x <= this.player.x + 80 && enemy.x >= this.player.x - 80) {
       if(enemy.y < this.player.y && enemy.y > this.player.y - cellY) {
-        this.player.x = 200;
+        this.player.x = 100;
         this.player.y = maxY;
+      }
+    }
+  });
+  this.enemies.forEach((enemy) => {
+    if (enemy.x <= this.player2.x + 80 && enemy.x >= this.player2.x - 80) {
+      if(enemy.y < this.player2.y && enemy.y > this.player2.y - cellY) {
+        this.player2.x = 300;
+        this.player2.y = maxY;
       }
     }
   });
