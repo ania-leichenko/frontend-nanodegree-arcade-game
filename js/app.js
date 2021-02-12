@@ -33,7 +33,7 @@ const Player = function({ x, y, allowedKeys, playerImageIndex }) {
       'images/char-pink-girl.png',
       'images/char-princess-girl.png',
     ];
-
+    this.countStars = 1;
     this.x = x;
     this.y = y;
     this.sprite = playerImages[playerImageIndex];
@@ -99,7 +99,7 @@ const Text = function(text) {
   this.text = text;
 };
 
-Text.prototype.update =function() {
+Text.prototype.update = function() {
 
 }
 
@@ -140,35 +140,42 @@ const Controller = function(Player, Enemy, Text) {
     new Enemy(20, 150, 2),
     new Enemy(40, 230, 3),
   ];
-
+  
   this.items = [
     ...this.enemies,
     this.player,
     this.player2,
-    this.gameResult,
+    this.gameResult
   ];
-};
-
+}
 Controller.prototype.update = function() {
   this.checkIfWin();
   this.checkIfLose();
-
   this.items.forEach(function(item) {
     item.update();
   });
 }
 
-
 Controller.prototype.checkIfWin = function() {
   if(this.player.y === -10) {
-    this.gameResult.text = 'Winner';
+    this.gameResult.text = 'Winner player 1';
     setTimeout(()=> {
-      this.player.x = 200;
+      this.player.x = 100;
       this.player.y = maxY;
       this.gameResult.text = '';
     }, 1000);
   }
-}
+
+  if(this.player2.y === -10) {
+    this.gameResult.text = 'Winner player 2';
+    setTimeout(()=> {
+      this.player2.x = 300;
+      this.player2.y = maxY;
+      this.gameResult.text = '';
+    }, 1000);
+  }  
+}  
+
 
 Controller.prototype.checkIfLose = function() {
   this.enemies.forEach((enemy) => {
@@ -197,4 +204,3 @@ Controller.prototype.render = function() {
 // --------------------------------------------------------
 
 const controller = new Controller(Player, Enemy, Text);
-
