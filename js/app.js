@@ -17,6 +17,7 @@ Enemy.prototype.update = function(dt) {
     this.x += this.speed;
 
     if (this.x > maxX + 100) {
+      this.speed = Math.floor(Math.random() * (4 - 2) ) + 2;
       this.x = -100;
     }
 };
