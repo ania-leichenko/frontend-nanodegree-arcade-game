@@ -6,26 +6,25 @@ const cellX = 100;
 const maxY = cellY * 5 - 10;
 const maxX = cellX * 4;
 
-const Enemy = function(x, y, speed) {
+class Enemy {
+  constructor({x, y, speed}){
     this.x = x;
     this.y = y;
-    this.speed = speed;
+    this.speed = speed;   
     this.sprite = 'images/enemy-bug.png';
-};
-
-Enemy.prototype.update = function(dt) {
-    this.x += this.speed;
-
-    if (this.x > maxX + 100) {
-      this.speed = Math.floor(Math.random() * (4 - 2) ) + 2;
-      this.x = -100;
-    }
-};
-
-Enemy.prototype.render = function() {
+  }
+  update(dt) {
+   this.x += this.speed;
+   if (this.x > maxX + 100) {
+    this.speed = Math.floor(Math.random() * (4 - 2) ) + 2;
+    this.x = -100;
+   }
+  }
+  render() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
+  }
+}
+ 
 const Player = function({ x, y, allowedKeys, playerImageIndex }) {
     const playerImages = [
       'images/char-boy.png',
@@ -95,6 +94,7 @@ Player.prototype.handleInput = function(key) {
       } 
   }
 }
+ 
 
 const Text = function(text) {
   this.text = text;
@@ -137,9 +137,9 @@ const Controller = function(Player, Enemy, Text) {
   });
 
   this.enemies = [
-    new Enemy(10, 63, 1),
-    new Enemy(20, 150, 2),
-    new Enemy(40, 230, 3),
+    new Enemy({x: 10, y: 63, speed: 1}),
+    new Enemy({x: 20, y: 150, speed: 2}),
+    new Enemy({x: 40, y: 230, speed: 3}),
   ];
   
   this.items = [
